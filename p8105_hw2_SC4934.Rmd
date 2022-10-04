@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r chunk_library, results = "hide", message = FALSE}
 library(tidyverse)
 library(readxl)
+library(dplyr)
 ```
 
 
@@ -178,6 +179,8 @@ mr_proff_merge %>%
 
 
 ```{r}
+library(dplyr)
+
 pols_month = 
   read_csv(
     "data/fivethirtyeight_datasets/pols-month.csv") %>% 
@@ -185,15 +188,19 @@ pols_month =
   separate(mon, into = c("year", "month", "day"), sep = "-", convert = TRUE) %>% 
   mutate(
     month = month.abb[month],
+    month = str_to_lower(month),
+    prez_dem = na_if(prez_dem, 0) ,
+    prez_gop = na_if(prez_gop, 0)
   ) %>% 
   relocate(prez_dem, .after = prez_gop) %>% 
-  pivot_longer(
+    pivot_longer(
     prez_gop:prez_dem,
     names_to = "president",
     names_prefix = "prez_"
   ) %>% 
   select(-value, -day)
   
+
 
 snp = 
   read_csv(
@@ -202,7 +209,8 @@ snp =
   separate(date, into = c("month", "day", "year"), sep = "/", convert = TRUE) %>% 
   mutate(
     month = month.abb[month],
-    year = ifelse(year > 49, year + 1900, year + 2000)
+    year = ifelse(year > 49, year + 1900, year + 2000),
+    month = str_to_lower(month)
   ) %>% 
   select(year, month, close)
 
@@ -215,6 +223,7 @@ unemployment =
     names_to = "month",
     values_to = "unemployement"
   ) 
+
 
 ```
 
@@ -232,4 +241,7 @@ pols_snp_unemployment =
 
 
 
-Join the datasets by merging snp into pols, and merging unemployment into the result.
+
+
+
+go back to president stuff in problem 2
