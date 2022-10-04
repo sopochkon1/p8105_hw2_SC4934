@@ -7,7 +7,7 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r chunk_library, results = "hide", message = FALSE}
 library(tidyverse)
 library(readxl)
 ```
@@ -26,10 +26,29 @@ trans_ent =
   janitor::clean_names() %>% 
   select(
     line, station_name, station_latitude, station_longitude, 
-    starts_with("route"), entry, vending, entrance_type, 
+    starts_with("route"), entry, exit_only, vending, entrance_type, 
     ada) %>% 
   mutate(entry = ifelse(entry == "YES", TRUE, FALSE))
 ```
+
+
+```{r, chunk_skim, results = "hide", message = FALSE}
+skimr::skim(trans_ent)
+```
+
+description: 
+the dataset `trans_ent` contains 1868 rows and 19 columns. There are 15 character, 2 logical, and 2 numeric variables. 
+it includes variables: line, station_name, station_latitude, station_longitude, all the vairables that start with 
+"route" (which are routes served), entry, exit_only, vending, entrance_type, and ada. 
+I used `janitor::clean_names` to start the tidying process, which converts column names to lower snake case. I also used `col_types` to convert some columns to character format. I used `select` to select the variables I wanted to include, and used `mutate` to convert entry variable to logical type. 
+
+this data is not tidy!
+
+
+
+
+
+
 
 
 
