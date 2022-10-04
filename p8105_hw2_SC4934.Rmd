@@ -36,7 +36,7 @@ trans_ent =
 skimr::skim(trans_ent)
 ```
 
-description: 
+## description: 
 the dataset `trans_ent` contains 1868 rows and 19 columns. There are 15 character, 2 logical, and 2 numeric variables. 
 it includes variables: line, station_name, station_latitude, station_longitude, all the vairables that start with 
 "route" (which are routes served), entry, exit_only, vending, entrance_type, and ada. 
@@ -45,8 +45,24 @@ I used `janitor::clean_names` to start the tidying process, which converts colum
 this data is not tidy!
 
 
+```{r }
+trans_ent %>% 
+  select(station_name, line) %>% 
+  distinct
+```
+
+After selecting only `station_name` and `line` and using the `distinct` function to obtain all unique combinations, we can see that there are 465 distinct stations.
 
 
+```{r}
+trans_ent %>% 
+  filter(ada == TRUE) %>% 
+  select(station_name, line) %>% 
+  distinct
+```
+
+the chunk above filters the ADA compliant stations among all distinct stations. 
+There are 84 ADA compliant stations. 
 
 
 
