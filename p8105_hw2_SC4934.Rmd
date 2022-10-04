@@ -27,7 +27,7 @@ trans_ent =
   janitor::clean_names() %>% 
   select(
     line, station_name, station_latitude, station_longitude, 
-    starts_with("route"), entry, exit_only, vending, entrance_type, 
+    starts_with("route"), entry, vending, entrance_type, 
     ada) %>% 
   mutate(entry = ifelse(entry == "YES", TRUE, FALSE))
 ```
@@ -45,8 +45,9 @@ I used `janitor::clean_names` to start the tidying process, which converts colum
 
 this data is not tidy!
 
+## distinct stations:
 
-```{r }
+```{r, chunk_distint_station}
 trans_ent %>% 
   select(station_name, line) %>% 
   distinct
@@ -54,6 +55,8 @@ trans_ent %>%
 
 After selecting only `station_name` and `line` and using the `distinct` function to obtain all unique combinations, we can see that there are 465 distinct stations.
 
+
+## ADA compliance
 
 ```{r}
 trans_ent %>% 
@@ -65,6 +68,7 @@ trans_ent %>%
 the chunk above filters the ADA compliant stations among all distinct stations. 
 There are 84 ADA compliant stations. 
 
+## allow entrance
 
 ```{r}
 trans_ent %>% 
@@ -107,31 +111,27 @@ trans_ent %>%
 60 distinct stations serve the A train, and of those 17 are ADA compliant. 
 
 
-
 # Problem 2
 
 ##import and clean Excel file
 
 ```{r}
-trash_wheel = readxl::read_excel('data/Trash Wheel Collection Data.xlsx',
+trash_wheel = read_excel('data/Trash Wheel Collection Data.xlsx',
                                  range = 'A2:N549',
                                  sheet = "Mr. Trash Wheel",
                                  ) %>% 
   janitor::clean_names() %>% 
-  drop_na(dumpster) %>% 
   mutate(
     type = "Mr Trash Wheel",
-    sports_balls_int = as.integer(sports_balls),
+    sports_balls = as.integer(sports_balls),
     dumpster = as.character(dumpster),
-  ) %>% 
-  select(-sports_balls) 
+  ) 
 
 
-professor_wheel = readxl::read_excel('data/Trash Wheel Collection Data.xlsx',
+professor_wheel = read_excel('data/Trash Wheel Collection Data.xlsx',
                                  range = 'A2:M96',
                                  sheet = "Professor Trash Wheel") %>% 
   janitor::clean_names() %>% 
-  drop_na(dumpster) %>% 
   mutate(
     type = "Professor Trash Wheel",
     dumpster = as.character(dumpster),
@@ -146,20 +146,18 @@ professor_wheel = readxl::read_excel('data/Trash Wheel Collection Data.xlsx',
 ```{r}
 mr_proff_merge <- bind_rows(trash_wheel, professor_wheel) %>% 
   janitor::clean_names()
-  
 ```
 
+Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables. For available data, what was the total weight of trash collected by Professor Trash Wheel? What was the total number of sports balls collected by Mr. Trash Wheel in 2020?
 
 ## description: 
 
-there are 641 observations in the dataset. key variables include `dumpster`, which distinguishes dumpsters, and type, 
-which shows whether the data belongs to mr. trash wheel or professor trash wheel. 
-
-
+there are 641 observations in the dataset. key variables include `dumpster`, which distinguishes dumpsters, and `type`, which shows whether the data belongs to mr. trash wheel or professor trash wheel. 
 
 
 total weight of trash collected by professor trash wheel is 190.12 tons, while the total number of sports balls collected
 by mr. trash wheel in 2020 is 856
+
 ```{r}
 mr_proff_merge %>% 
   filter(type == "Professor Trash Wheel") %>% 
@@ -179,8 +177,6 @@ mr_proff_merge %>%
 
 
 ```{r}
-library(dplyr)
-
 pols_month = 
   read_csv(
     "data/fivethirtyeight_datasets/pols-month.csv") %>% 
@@ -200,7 +196,6 @@ pols_month =
   ) %>% 
   select(-value, -day)
   
-
 
 snp = 
   read_csv(
@@ -232,16 +227,25 @@ unemployment =
 
 ```{r}
 pols_snp_merge =
-  left_join(snp, pols_month)
+  left_join(snp, pols_month) %>% 
+  janitor::clean_names()
   
 pols_snp_unemployment = 
-  left_join(unemployment, pols_snp_merge)
+  left_join(unemployment, pols_snp_merge)%>% 
+  janitor::clean_names()
  
 ```
 
+Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
 
 
 
 
 
-go back to president stuff in problem 2
+
+
+
+
+
+
+
