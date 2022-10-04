@@ -184,7 +184,7 @@ pols_month =
   janitor::clean_names() %>% 
   separate(mon, into = c("year", "month", "day"), sep = "-", convert = TRUE) %>% 
   mutate(
-    month = month.name[month]
+    month = month.abb[month],
   ) %>% 
   relocate(prez_dem, .after = prez_gop) %>% 
   pivot_longer(
@@ -195,10 +195,41 @@ pols_month =
   select(-value, -day)
   
 
+snp = 
+  read_csv(
+    "data/fivethirtyeight_datasets/snp.csv") %>% 
+  janitor::clean_names() %>% 
+  separate(date, into = c("month", "day", "year"), sep = "/", convert = TRUE) %>% 
+  mutate(
+    month = month.abb[month],
+    year = ifelse(year > 49, year + 1900, year + 2000)
+  ) %>% 
+  select(year, month, close)
+
+unemployment = 
+  read_csv(
+    "data/fivethirtyeight_datasets/unemployment.csv") %>% 
+  janitor::clean_names() %>%
+  pivot_longer(
+    jan:dec,
+    names_to = "month",
+    values_to = "unemployement"
+  ) 
+
+```
+
+
+## merge
+
+```{r}
+pols_snp_merge =
+  left_join(snp, pols_month)
+  
+pols_snp_unemployment = 
+  left_join(unemployment, pols_snp_merge)
+ 
 ```
 
 
 
-
-
-
+Join the datasets by merging snp into pols, and merging unemployment into the result.
