@@ -65,7 +65,43 @@ the chunk above filters the ADA compliant stations among all distinct stations.
 There are 84 ADA compliant stations. 
 
 
+```{r}
+trans_ent %>% 
+  filter(vending == "NO") %>% 
+  pull(entry) %>% 
+  mean
+```
+
+37.70% of station entrances/exits without vending allow entrance. 
 
 
+## reformat data 
 
+to reformat data so that route number and route name are distinct variables
+
+```{r}
+trans_ent <- trans_ent %>% 
+  pivot_longer(
+    route1:route11,
+    names_to = "route_number",
+    values_to = "route_name")
+```
+
+
+to determine how many distinct stations serve the A train, and of those how many are ADA compliant: 
+
+```{r}
+trans_ent %>% 
+      filter(route_name == "A")  %>% 
+      select(station_name, line) %>% 
+      distinct
+  
+trans_ent %>% 
+  filter(route_name == "A", ada == TRUE) %>% 
+  select(station_name, line) %>% 
+  distinct
+
+```
+
+60 distinct stations serve the A train, and of those 17 are ADA compliant. 
 
