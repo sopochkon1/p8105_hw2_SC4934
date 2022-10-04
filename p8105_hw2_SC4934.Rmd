@@ -112,31 +112,30 @@ trans_ent %>%
 ##import and clean Excel file
 
 ```{r}
-trash_wheel = readxl::read_excel('data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx',
-                                 range = 'A2:N535',
-                                 sheet = "Mr. Trash Wheel") %>% 
+trash_wheel = readxl::read_excel('data/Trash Wheel Collection Data.xlsx',
+                                 range = 'A2:N549',
+                                 sheet = "Mr. Trash Wheel",
+                                 ) %>% 
   janitor::clean_names() %>% 
   drop_na(dumpster) %>% 
   mutate(
     type = "Mr Trash Wheel",
     sports_balls_int = as.integer(sports_balls),
+    dumpster = as.character(dumpster),
   ) %>% 
-  select(-sports_balls) %>% 
-  subset(dumpster != "Grand Total")
+  select(-sports_balls) 
 
 
-
-professor_wheel = readxl::read_excel('data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx',
-                                 range = 'A2:N117',
+professor_wheel = readxl::read_excel('data/Trash Wheel Collection Data.xlsx',
+                                 range = 'A2:M96',
                                  sheet = "Professor Trash Wheel") %>% 
   janitor::clean_names() %>% 
   drop_na(dumpster) %>% 
   mutate(
     type = "Professor Trash Wheel",
     dumpster = as.character(dumpster),
-    sports_balls_int = as.integer(sports_balls)
-  ) %>% 
-  select(-sports_balls)
+    year = as.character(year)
+  ) 
 
 ```
 
@@ -152,13 +151,13 @@ mr_proff_merge <- bind_rows(trash_wheel, professor_wheel) %>%
 
 ## description: 
 
-there are 524 observations in the dataset. key variables include `dumpster`, which distinguishes dumpsters, and type, 
+there are 641 observations in the dataset. key variables include `dumpster`, which distinguishes dumpsters, and type, 
 which shows whether the data belongs to mr. trash wheel or professor trash wheel. 
 
 
 
 
-total weight of trash collected by professor trash wheel is 135.5 tons, while the total number of sports balls collected
+total weight of trash collected by professor trash wheel is 190.12 tons, while the total number of sports balls collected
 by mr. trash wheel in 2020 is 856
 ```{r}
 mr_proff_merge %>% 
@@ -178,6 +177,25 @@ mr_proff_merge %>%
 #Problem 3
 
 
+```{r}
+pols_month = 
+  read_csv(
+    "data/fivethirtyeight_datasets/pols-month.csv") %>% 
+  janitor::clean_names() %>% 
+  separate(mon, into = c("year", "month", "day"), sep = "-", convert = TRUE) %>% 
+  mutate(
+    month = month.name[month]
+  ) %>% 
+  relocate(prez_dem, .after = prez_gop) %>% 
+  pivot_longer(
+    prez_gop:prez_dem,
+    names_to = "president",
+    names_prefix = "prez_"
+  ) %>% 
+  select(-value, -day)
+  
+
+```
 
 
 
