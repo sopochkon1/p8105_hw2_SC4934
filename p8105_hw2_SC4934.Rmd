@@ -121,7 +121,8 @@ trash_wheel = readxl::read_excel('data/Trash-Wheel-Collection-Totals-7-2020-2.xl
     type = "Mr Trash Wheel",
     sports_balls_int = as.integer(sports_balls),
   ) %>% 
-  select(-sports_balls)
+  select(-sports_balls) %>% 
+  subset(dumpster != "Grand Total")
 
 
 
@@ -149,8 +150,32 @@ mr_proff_merge <- bind_rows(trash_wheel, professor_wheel) %>%
 ```
 
 
+## description: 
+
+there are 524 observations in the dataset. key variables include `dumpster`, which distinguishes dumpsters, and type, 
+which shows whether the data belongs to mr. trash wheel or professor trash wheel. 
 
 
+
+
+total weight of trash collected by professor trash wheel is 135.5 tons, while the total number of sports balls collected
+by mr. trash wheel in 2020 is 856
+```{r}
+mr_proff_merge %>% 
+  filter(type == "Professor Trash Wheel") %>% 
+  pull(weight_tons) %>% 
+  sum
+
+mr_proff_merge %>% 
+  filter(type == "Mr Trash Wheel", year == "2020") %>% 
+  pull(sports_balls_int) %>% 
+  sum
+
+```
+
+
+
+#Problem 3
 
 
 
