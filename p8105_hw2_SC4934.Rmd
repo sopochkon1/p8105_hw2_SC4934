@@ -105,3 +105,57 @@ trans_ent %>%
 
 60 distinct stations serve the A train, and of those 17 are ADA compliant. 
 
+
+
+# Problem 2
+
+##import and clean Excel file
+
+```{r}
+trash_wheel = readxl::read_excel('data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx',
+                                 range = 'A2:N535',
+                                 sheet = "Mr. Trash Wheel") %>% 
+  janitor::clean_names() %>% 
+  drop_na(dumpster) %>% 
+  mutate(
+    type = "Mr Trash Wheel",
+    sports_balls_int = as.integer(sports_balls),
+  ) %>% 
+  select(-sports_balls)
+
+
+
+professor_wheel = readxl::read_excel('data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx',
+                                 range = 'A2:N117',
+                                 sheet = "Professor Trash Wheel") %>% 
+  janitor::clean_names() %>% 
+  drop_na(dumpster) %>% 
+  mutate(
+    type = "Professor Trash Wheel",
+    dumpster = as.character(dumpster),
+    sports_balls_int = as.integer(sports_balls)
+  ) %>% 
+  select(-sports_balls)
+
+```
+
+
+
+## merge data
+```{r}
+mr_proff_merge <- bind_rows(trash_wheel, professor_wheel) %>% 
+  janitor::clean_names()
+  
+```
+
+
+
+
+
+
+
+
+
+
+
+
