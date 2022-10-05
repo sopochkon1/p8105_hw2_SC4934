@@ -121,6 +121,7 @@ trash_wheel = read_excel('data/Trash Wheel Collection Data.xlsx',
                                  sheet = "Mr. Trash Wheel",
                                  ) %>% 
   janitor::clean_names() %>% 
+  drop_na(dumpster) %>% 
   mutate(
     type = "Mr Trash Wheel",
     sports_balls = as.integer(sports_balls),
@@ -132,6 +133,7 @@ professor_wheel = read_excel('data/Trash Wheel Collection Data.xlsx',
                                  range = 'A2:M96',
                                  sheet = "Professor Trash Wheel") %>% 
   janitor::clean_names() %>% 
+  drop_na(dumpster) %>% 
   mutate(
     type = "Professor Trash Wheel",
     dumpster = as.character(dumpster),
