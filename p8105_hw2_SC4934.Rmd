@@ -113,7 +113,7 @@ trans_ent %>%
 
 # Problem 2
 
-##import and clean Excel file
+## Import and clean Excel file
 
 ```{r}
 trash_wheel = read_excel('data/Trash Wheel Collection Data.xlsx',
@@ -143,38 +143,31 @@ professor_wheel = read_excel('data/Trash Wheel Collection Data.xlsx',
 
 
 ## merge data
-```{r}
+```{r, chunk_merge}
 mr_proff_merge <- bind_rows(trash_wheel, professor_wheel) %>% 
   janitor::clean_names()
 ```
-
-Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables. For available data, what was the total weight of trash collected by Professor Trash Wheel? What was the total number of sports balls collected by Mr. Trash Wheel in 2020?
 
 ## description: 
 
 there are 641 observations in the dataset. key variables include `dumpster`, which distinguishes dumpsters, and `type`, which shows whether the data belongs to mr. trash wheel or professor trash wheel. 
 
+total weight of trash collected by professor trash wheel is `r sum(mr_proff_merge[which(mr_proff_merge$type == "Professor Trash Wheel"), "weight_tons"])` tons, while the total number of sports balls collected by mr. trash wheel in 2020 is 856
 
-total weight of trash collected by professor trash wheel is 190.12 tons, while the total number of sports balls collected
-by mr. trash wheel in 2020 is 856
 
-```{r}
-mr_proff_merge %>% 
-  filter(type == "Professor Trash Wheel") %>% 
-  pull(weight_tons) %>% 
-  sum
+```{r, chunk_sports_balls}
 
 mr_proff_merge %>% 
   filter(type == "Mr Trash Wheel", year == "2020") %>% 
-  pull(sports_balls_int) %>% 
+  pull(sports_balls) %>% 
   sum
 
 ```
 
 
+# Problem 3
 
-#Problem 3
-
+## Import and clean
 
 ```{r}
 pols_month = 
@@ -192,10 +185,12 @@ pols_month =
     pivot_longer(
     prez_gop:prez_dem,
     names_to = "president",
-    names_prefix = "prez_"
+    names_prefix = "prez_",
+    values_drop_na = TRUE
   ) %>% 
   select(-value, -day)
   
+
 
 snp = 
   read_csv(
@@ -219,7 +214,6 @@ unemployment =
     values_to = "unemployement"
   ) 
 
-
 ```
 
 
@@ -230,18 +224,27 @@ pols_snp_merge =
   left_join(snp, pols_month) %>% 
   janitor::clean_names()
   
+  
+  
 pols_snp_unemployment = 
   left_join(unemployment, pols_snp_merge)%>% 
   janitor::clean_names()
  
+
+
 ```
 
-Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
 
+## descriptions:
 
+`pols_month` : contains 822 obserations and 9 variables. describes the number of politicians who are democratic or republican at a given date/time. it now also contains `president`, which shows whether the 
+president at the time was democratic or republican. 
 
+`snp` : contains 787 observations of 3 variables (after cleaning, originally was 2 variables). it contains the year and month, and the closing values of the S&P stock index under the variable `close`.
 
+`unemployement` : after cleaning, contains 816 observations of 3 variables. it contains year and month, and the percent unemployment under the variable `unemployment`.
 
+`pols_snp_unemployment` : the final merged dataset contains `pols_month`, `snp`, and `unemployment`. it was joined on month and year, and shows the combined results from all 3 datasets. contains 1602 rows and 11 columns. the range of years is `r range(pols_snp_unemployment$year)`. key variables include `month`, `year`, `president`, `unemployment`, and `close`
 
 
 
